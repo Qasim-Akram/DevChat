@@ -1,0 +1,66 @@
+.wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin: 8px 0;
+  background: var(--bg-base);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.dots {
+  display: flex;
+  gap: 5px;
+}
+
+.dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-bright);
+}
+
+.dots span:nth-child(1) { background: #f87171; }
+.dots span:nth-child(2) { background: #fbbf24; }
+.dots span:nth-child(3) { background: #4ade80; }
+
+.lang {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.copyBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: 'Syne', sans-serif;
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+}
+
+.copyBtn:hover {
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border-color: var(--border-bright);
+}
+
+.copyBtn.copied {
+  color: var(--green);
+  border-color: rgba(74, 222, 128, 0.3);
+}
