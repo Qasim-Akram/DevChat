@@ -1,40 +1,41 @@
-import { useEffect, useState } from 'react'
-import { ChatInput } from './components/ChatInput';
-import ChatMessages from './components/ChatMessages';
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import { ChatProvider } from './context/ChatContext'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import Chat from './pages/Chat'
 
-const defaultMessages = [
-    { message: "Hello Chatbot", sender: "user", id: "0" },
-    { message: "Hello! How can i help you", sender: "robot", id: "1" }
-    
-]
-
-function App() {
-    const [chatMessages, setChatMessages] = useState(
-        JSON.parse(localStorage.getItem('messages')) ||
-        []
-    )
-
-    useEffect(
-        () => {
-            localStorage.setItem('messages', JSON.stringify(chatMessages))
-        },
-        [chatMessages]
-    )
-    
-    return (
-        <div className="app-container">
-
-            <ChatMessages
-                chatMessages={[...defaultMessages, ...chatMessages]}
-            />
-            <ChatInput
-                chatMessages={chatMessages}
-                setChatMessages={setChatMessages}
-            />
-
-        </div>
-    )
+function ProtectedRoute({ children }) {
+  const { user } = useAuth()
+  return user ? children : <Navigate to="/login" replace />
 }
 
-export default App
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route
+        path="/chat"
+        element={
+          <ProtectedRoute>
+            <ChatProvider>
+              <Chat />
+            </ChatProvider>
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  )
+}
