@@ -42,7 +42,7 @@ export default function Chat() {
 
         {error && (
           <div className={styles.errorBanner}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -55,7 +55,7 @@ export default function Chat() {
           {!activeSession ? (
             <div className={styles.welcome}>
               <div className={styles.welcomeIcon}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <polyline points="16 18 22 12 16 6" />
                   <polyline points="8 6 2 12 8 18" />
                 </svg>
@@ -63,7 +63,7 @@ export default function Chat() {
               <h2 className={styles.welcomeTitle}>Welcome to DevChat</h2>
               <p className={styles.welcomeDesc}>
                 Your AI assistant built exclusively for developers.<br />
-                Debug, explain, review, and build — faster.
+                Debug, explain, and build — faster.
               </p>
               <button className={styles.startBtn} onClick={newSession}>
                 Start a new chat
@@ -79,8 +79,12 @@ export default function Chat() {
             </div>
           ) : (
             <div className={styles.messageList}>
-              {activeSession.messages.map(msg => (
-                <ChatMessage key={msg.id} message={msg} />
+              {activeSession.messages.map((msg, i) => (
+                <ChatMessage
+                  key={msg.id}
+                  message={msg}
+                  isLast={i === activeSession.messages.length - 1}
+                />
               ))}
               {isTyping && <TypingIndicator />}
             </div>

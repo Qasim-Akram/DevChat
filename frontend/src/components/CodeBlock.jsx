@@ -18,22 +18,20 @@ export function CodeBlock({ language, children }) {
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <div className={styles.dots}>
-          <span />
-          <span />
-          <span />
+          <span /><span /><span />
         </div>
         <span className={styles.lang}>{lang}</span>
         <button onClick={handleCopy} className={`${styles.copyBtn} ${copied ? styles.copied : ''}`}>
           {copied ? (
             <>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
               Copied
             </>
           ) : (
             <>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
@@ -47,14 +45,14 @@ export function CodeBlock({ language, children }) {
         style={vscDarkPlus}
         customStyle={{
           margin: 0,
-          borderRadius: '0 0 10px 10px',
-          fontSize: '13px',
-          padding: '16px',
-          background: '#0d0f1a',
+          borderRadius: 0,
+          fontSize: '12.5px',
+          padding: '14px 16px',
+          background: 'transparent',
           border: 'none'
         }}
         showLineNumbers
-        lineNumberStyle={{ color: '#3d4070', fontSize: '12px', minWidth: '2.5em' }}
+        lineNumberStyle={{ color: 'rgba(255,255,255,0.15)', fontSize: '11px', minWidth: '2.2em' }}
       >
         {children}
       </SyntaxHighlighter>

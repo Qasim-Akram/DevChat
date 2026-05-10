@@ -15,8 +15,7 @@ export function Sidebar() {
 
   const formatDate = (ts) => {
     const d = new Date(ts)
-    const now = new Date()
-    const diff = now - d
+    const diff = Date.now() - d
     if (diff < 86400000) return 'Today'
     if (diff < 172800000) return 'Yesterday'
     return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
@@ -34,7 +33,7 @@ export function Sidebar() {
       <div className={styles.top}>
         <div className={styles.brand}>
           <div className={styles.brandIcon}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <polyline points="16 18 22 12 16 6" />
               <polyline points="8 6 2 12 8 18" />
             </svg>
@@ -44,7 +43,7 @@ export function Sidebar() {
         </div>
 
         <button className={styles.newChatBtn} onClick={newSession}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
@@ -55,7 +54,7 @@ export function Sidebar() {
       <div className={styles.history}>
         {sessions.length === 0 ? (
           <div className={styles.empty}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
             <p>No chats yet</p>
@@ -73,21 +72,16 @@ export function Sidebar() {
                   onMouseEnter={() => setHoveredId(s.id)}
                   onMouseLeave={() => setHoveredId(null)}
                 >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                   </svg>
                   <span className={styles.sessionTitle}>{s.title}</span>
                   {hoveredId === s.id && (
-                    <span
-                      className={styles.deleteBtn}
-                      onClick={(e) => handleDelete(e, s.id)}
-                      title="Delete chat"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <span className={styles.deleteBtn} onClick={(e) => handleDelete(e, s.id)}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <polyline points="3 6 5 6 21 6" />
                         <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                        <path d="M10 11v6M14 11v6" />
-                        <path d="M9 6V4h6v2" />
+                        <path d="M10 11v6M14 11v6M9 6V4h6v2" />
                       </svg>
                     </span>
                   )}
@@ -108,7 +102,7 @@ export function Sidebar() {
             <p className={styles.userEmail}>{user?.email}</p>
           </div>
           <button className={styles.logoutBtn} onClick={logout} title="Logout">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
