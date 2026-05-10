@@ -1,4 +1,4 @@
-# Dependency directories
+# Dependencies
 node_modules/
 backend/node_modules/
 frontend/node_modules/
@@ -7,13 +7,14 @@ frontend/node_modules/
 frontend/dist/
 frontend/build/
 
-# Environment variables (Crucial for security)
+# Environment variables
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 backend/.env
+frontend/.env
 
 # Logs
 npm-debug.log*
@@ -22,16 +23,15 @@ yarn-error.log*
 logs/
 *.log
 
-# OS Metadata
+# OS
 .DS_Store
 Thumbs.db
 
-# IDE / Editor folders
+# Editor
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Local data (since you have a JSON data store)
+# User data
 backend/data/*.json
-!backend/data/users.json # Optional: Keep this if you want a default template
