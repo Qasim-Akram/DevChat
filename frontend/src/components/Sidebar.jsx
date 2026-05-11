@@ -86,7 +86,6 @@ export function Sidebar({ collapsed }) {
           <div className={styles.userAvatar}>{user?.username?.charAt(0).toUpperCase()}</div>
           <div className={styles.userInfo}>
             <p className={styles.userName}>{user?.username}</p>
-            <p className={styles.userEmail}>{user?.email}</p>
           </div>
           <button className={styles.logoutBtn} onClick={logout} title="Logout">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
