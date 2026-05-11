@@ -11,7 +11,7 @@ export function ChatInput() {
     const ta = textareaRef.current
     if (!ta) return
     ta.style.height = 'auto'
-    ta.style.height = Math.min(ta.scrollHeight, 160) + 'px'
+    ta.style.height = Math.min(ta.scrollHeight, 140) + 'px'
   }, [text])
 
   const handleSend = () => {
@@ -22,10 +22,7 @@ export function ChatInput() {
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() }
   }
 
   const disabled = !activeSession
@@ -48,15 +45,12 @@ export function ChatInput() {
           onClick={handleSend}
           disabled={!text.trim() || isTyping || disabled}
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="22" y1="2" x2="11" y2="13" />
             <polygon points="22 2 15 22 11 13 2 9 22 2" />
           </svg>
         </button>
       </div>
-      <p className={styles.hint}>
-        <span className={styles.model}>llama-3.3-70b</span> · DevChat answers developer questions only
-      </p>
     </div>
   )
 }

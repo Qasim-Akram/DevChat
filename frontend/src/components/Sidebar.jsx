@@ -3,7 +3,7 @@ import { useChat } from '../context/ChatContext'
 import { useAuth } from '../context/AuthContext'
 import styles from './Sidebar.module.css'
 
-export function Sidebar() {
+export function Sidebar({ collapsed }) {
   const { sessions, activeSessionId, newSession, setActiveSession, deleteSession } = useChat()
   const { user, logout } = useAuth()
   const [hoveredId, setHoveredId] = useState(null)
@@ -14,11 +14,10 @@ export function Sidebar() {
   }
 
   const formatDate = (ts) => {
-    const d = new Date(ts)
-    const diff = Date.now() - d
+    const diff = Date.now() - ts
     if (diff < 86400000) return 'Today'
     if (diff < 172800000) return 'Yesterday'
-    return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
+    return new Date(ts).toLocaleDateString([], { month: 'short', day: 'numeric' })
   }
 
   const grouped = sessions.reduce((acc, s) => {
@@ -29,23 +28,15 @@ export function Sidebar() {
   }, {})
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
       <div className={styles.top}>
         <div className={styles.brand}>
-          <div className={styles.brandIcon}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="16 18 22 12 16 6" />
-              <polyline points="8 6 2 12 8 18" />
-            </svg>
-          </div>
+          <span className={styles.brandMark}>{'<dev>'}</span>
           <span className={styles.brandName}>DevChat</span>
-          <span className={styles.brandBadge}>beta</span>
         </div>
-
         <button className={styles.newChatBtn} onClick={newSession}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
+            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
           </svg>
           New Chat
         </button>
@@ -54,15 +45,12 @@ export function Sidebar() {
       <div className={styles.history}>
         {sessions.length === 0 ? (
           <div className={styles.empty}>
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
             <p>No chats yet</p>
-            <span>Start a new chat above</span>
+            <span>Start one above</span>
           </div>
         ) : (
           Object.entries(grouped).map(([label, group]) => (
-            <div key={label} className={styles.group}>
+            <div key={label}>
               <p className={styles.groupLabel}>{label}</p>
               {group.map(s => (
                 <button
@@ -72,7 +60,7 @@ export function Sidebar() {
                   onMouseEnter={() => setHoveredId(s.id)}
                   onMouseLeave={() => setHoveredId(null)}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                   </svg>
                   <span className={styles.sessionTitle}>{s.title}</span>
@@ -94,9 +82,7 @@ export function Sidebar() {
 
       <div className={styles.bottom}>
         <div className={styles.userRow}>
-          <div className={styles.userAvatar}>
-            {user?.username?.charAt(0).toUpperCase()}
-          </div>
+          <div className={styles.userAvatar}>{user?.username?.charAt(0).toUpperCase()}</div>
           <div className={styles.userInfo}>
             <p className={styles.userName}>{user?.username}</p>
             <p className={styles.userEmail}>{user?.email}</p>

@@ -9,13 +9,8 @@ export default function Login() {
   const navigate = useNavigate()
   const { values, handleChange, handleBlur } = useFormInput({ email: '', password: '' })
 
-  useEffect(() => {
-    if (user) navigate('/chat', { replace: true })
-  }, [user, navigate])
-
-  useEffect(() => {
-    clearError()
-  }, [])
+  useEffect(() => { if (user) navigate('/chat', { replace: true }) }, [user, navigate])
+  useEffect(() => { clearError() }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -26,22 +21,16 @@ export default function Login() {
   return (
     <div className={styles.page}>
       <div className={styles.grid} />
-
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <div className={styles.logo}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="16 18 22 12 16 6" />
-              <polyline points="8 6 2 12 8 18" />
-            </svg>
-          </div>
+          <div className={styles.logoMark}>{'<dev />'}</div>
           <h1 className={styles.title}>Welcome back</h1>
-          <p className={styles.subtitle}>Sign in to DevChat — built for developers</p>
+          <p className={styles.subtitle}>Sign in to DevChat</p>
         </div>
 
         {error && (
           <div className={styles.errorBox}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             {error}
@@ -51,51 +40,19 @@ export default function Login() {
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
             <label className={styles.label}>Email</label>
-            <input
-              className={styles.input}
-              type="email"
-              name="email"
-              value={values.email}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="you@example.com"
-              required
-              autoFocus
-            />
+            <input className={styles.input} type="email" name="email" value={values.email} onChange={handleChange} onBlur={handleBlur} placeholder="you@example.com" required autoFocus />
           </div>
-
           <div className={styles.field}>
             <label className={styles.label}>Password</label>
-            <input
-              className={styles.input}
-              type="password"
-              name="password"
-              value={values.password}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="••••••••"
-              required
-            />
+            <input className={styles.input} type="password" name="password" value={values.password} onChange={handleChange} onBlur={handleBlur} placeholder="••••••••" required />
           </div>
-
           <button className={styles.submitBtn} type="submit" disabled={loading}>
-            {loading ? (
-              <span className={styles.spinner} />
-            ) : (
-              <>
-                Sign In
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </>
-            )}
+            {loading ? <span className={styles.spinner} /> : 'Sign In'}
           </button>
         </form>
 
         <p className={styles.switchText}>
-          Don't have an account?{' '}
-          <Link to="/signup" className={styles.switchLink}>Create one</Link>
+          No account? <Link to="/signup" className={styles.switchLink}>Create one</Link>
         </p>
       </div>
     </div>
