@@ -5,9 +5,9 @@ import { useChat } from '../context/ChatContext'
 import styles from './ChatMessage.module.css'
 
 const PROMPTS = [
-  { label: 'Debug this', text: 'Debug this code: ' },
-  { label: 'Explain', text: 'Explain this: ' },
-  { label: 'Optimize', text: 'Optimize this: ' },
+  { label: 'Debug this', text: 'Audit the code in your last response for bugs, edge cases, and logical errors. Return a fixed version with a brief explanation of each change ' },
+  { label: 'Explain', text: 'Break down your previous response step by step. For each part, explain what it does, why it was used, and how it works — using simple language, analogies, and examples where helpful ' },
+  { label: 'Optimize', text: 'Optimize the code from your previous response for better performance, readability, and efficiency. Refactor where needed, remove redundancy, and follow best practices. For each change, briefly explain what was improved and why: ' },
 ]
 
 function formatTime(ts) {
