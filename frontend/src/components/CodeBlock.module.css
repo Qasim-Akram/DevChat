@@ -68,3 +68,8 @@
   color: rgba(34, 197, 94, 0.8);
   border-color: rgba(34, 197, 94, 0.2);
 }
+
+.styles.logo {
+  width: 10px;
+  height: 10px;
+}

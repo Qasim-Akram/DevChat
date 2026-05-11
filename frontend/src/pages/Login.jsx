@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useFormInput } from '../hooks/useFormInput'
 import styles from './Auth.module.css'
+import logo from '../assets/logo.svg'
 
 export default function Login() {
   const { login, error, loading, clearError, user } = useAuth()
@@ -23,7 +24,7 @@ export default function Login() {
       <div className={styles.grid} />
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <div className={styles.logoMark}>{'<dev />'}</div>
+          <img className={styles.logo} src={logo} alt="logo" />
           <h1 className={styles.title}>Welcome back</h1>
           <p className={styles.subtitle}>Sign in to DevChat</p>
         </div>

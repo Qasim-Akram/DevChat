@@ -6,6 +6,7 @@ import { ChatInput } from '../components/ChatInput'
 import { TypingIndicator } from '../components/TypingIndicator'
 import { useAutoScroll } from '../hooks/useAutoScroll'
 import styles from './Chat.module.css'
+import logo from '../assets/logo.svg'
 
 export default function Chat() {
   const { activeSession, isTyping, error, newSession, clearError } = useChat()
@@ -57,7 +58,7 @@ export default function Chat() {
         <div className={styles.messages} ref={messagesRef}>
           {!activeSession ? (
             <div className={styles.welcome}>
-              <div className={styles.welcomeMark}>{'<dev />'}</div>
+              <img src={logo} alt="logo" className={styles.logo} />
               <h2 className={styles.welcomeTitle}>DevChat</h2>
               <p className={styles.welcomeDesc}>
                 AI assistant built for developers.<br />Debug, explain, and build faster.

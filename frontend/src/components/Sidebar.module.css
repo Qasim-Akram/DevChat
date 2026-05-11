@@ -33,18 +33,10 @@
   gap: 8px;
   padding: 0 4px;
 }
+.logo {
+  width: 35px;
+  height: 35px;
 
-.brandMark {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-1);
-  background: var(--glass-3);
-  border: 1px solid var(--border-bright);
-  padding: 4px 8px;
-  border-radius: var(--r-sm);
-  letter-spacing: 0.02em;
-  flex-shrink: 0;
 }
 
 .brandName {
@@ -157,7 +149,7 @@
 }
 
 .deleteBtn:hover {
-  color: rgba(239, 68, 68, 0.8);
+  color: rgba(214, 214, 214, 0.8);
 }
 
 .bottom {
@@ -226,7 +218,7 @@
 }
 
 .logoutBtn:hover {
-  background: rgba(239, 68, 68, 0.08);
-  border-color: rgba(239, 68, 68, 0.2);
-  color: rgba(239, 68, 68, 0.7);
+  background: rgba(247, 246, 246, 0.08);
+  border-color: rgba(255, 253, 253, 0.2);
+  color: rgba(199, 199, 199, 0.7);
 }

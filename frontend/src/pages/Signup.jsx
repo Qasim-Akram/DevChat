@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useFormInput } from '../hooks/useFormInput'
 import styles from './Auth.module.css'
+import logo from '../assets/logo.svg'
 
 export default function Signup() {
   const { signup, error, loading, clearError, user } = useAuth()
@@ -25,7 +26,7 @@ export default function Signup() {
       <div className={styles.grid} />
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <div className={styles.logoMark}>{'<dev />'}</div>
+          <img src={logo} alt="logo" className={styles.logo} />
           <h1 className={styles.title}>Create account</h1>
           <p className={styles.subtitle}>Join DevChat</p>
         </div>

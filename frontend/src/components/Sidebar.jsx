@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useChat } from '../context/ChatContext'
 import { useAuth } from '../context/AuthContext'
 import styles from './Sidebar.module.css'
+import logo from '../assets/logo.svg'
 
 export function Sidebar({ collapsed }) {
   const { sessions, activeSessionId, newSession, setActiveSession, deleteSession } = useChat()
@@ -31,7 +32,7 @@ export function Sidebar({ collapsed }) {
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
       <div className={styles.top}>
         <div className={styles.brand}>
-          <span className={styles.brandMark}>{'<dev>'}</span>
+          <img className={styles.logo} src={logo} alt="logo" />
           <span className={styles.brandName}>DevChat</span>
         </div>
         <button className={styles.newChatBtn} onClick={newSession}>
