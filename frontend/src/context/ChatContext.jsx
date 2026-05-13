@@ -1,52 +1,69 @@
-import { createContext, useContext, useReducer, useCallback } from 'react'
-import { sendMessage } from '../utils/groq'
+import { createContext, useContext, useReducer, useCallback, useEffect } from 'react'
+import { useAuth } from './AuthContext'
+import {
+  fetchSessions,
+  fetchSession,
+  createSession,
+  deleteSessionAPI,
+  addMessageToSession,
+  sendChatMessage
+} from '../utils/api'
 
 const ChatContext = createContext(null)
 
 const initialState = {
-  sessions: JSON.parse(localStorage.getItem('devchat_sessions') || '[]'),
+  sessions: [],          
   activeSessionId: null,
+  activeMessages: [],    
   isTyping: false,
-  error: null
+  error: null,
+  loadingSessions: false,
+  loadingMessages: false
 }
 
 function chatReducer(state, action) {
   switch (action.type) {
-    case 'NEW_SESSION': {
-      const session = {
-        id: crypto.randomUUID(),
-        title: 'New Chat',
-        createdAt: Date.now(),
-        messages: []
+    case 'SET_LOADING_SESSIONS':
+      return { ...state, loadingSessions: action.payload }
+
+    case 'SET_LOADING_MESSAGES':
+      return { ...state, loadingMessages: action.payload }
+
+    case 'SET_SESSIONS':
+      return { ...state, sessions: action.payload, loadingSessions: false }
+
+    case 'ADD_SESSION': {
+      return {
+        ...state,
+        sessions: [action.payload, ...state.sessions],
+        activeSessionId: action.payload.id,
+        activeMessages: []
       }
-      const sessions = [session, ...state.sessions]
-      localStorage.setItem('devchat_sessions', JSON.stringify(sessions))
-      return { ...state, sessions, activeSessionId: session.id }
     }
 
     case 'SET_ACTIVE_SESSION':
-      return { ...state, activeSessionId: action.payload }
+      return { ...state, activeSessionId: action.payload, activeMessages: [] }
+
+    case 'SET_ACTIVE_MESSAGES':
+      return { ...state, activeMessages: action.payload, loadingMessages: false }
+
+    case 'APPEND_MESSAGE':
+      return { ...state, activeMessages: [...state.activeMessages, action.payload] }
+
+    case 'UPDATE_SESSION_TITLE': {
+      const sessions = state.sessions.map(s =>
+        s.id === action.payload.id ? { ...s, title: action.payload.title } : s
+      )
+      return { ...state, sessions }
+    }
 
     case 'DELETE_SESSION': {
       const sessions = state.sessions.filter(s => s.id !== action.payload)
-      localStorage.setItem('devchat_sessions', JSON.stringify(sessions))
       const activeSessionId = state.activeSessionId === action.payload
         ? (sessions[0]?.id || null)
         : state.activeSessionId
-      return { ...state, sessions, activeSessionId }
-    }
-
-    case 'ADD_MESSAGE': {
-      const sessions = state.sessions.map(s => {
-        if (s.id !== state.activeSessionId) return s
-        const messages = [...s.messages, action.payload]
-        const title = s.messages.length === 0 && action.payload.sender === 'user'
-          ? action.payload.content.slice(0, 40) + (action.payload.content.length > 40 ? '...' : '')
-          : s.title
-        return { ...s, messages, title }
-      })
-      localStorage.setItem('devchat_sessions', JSON.stringify(sessions))
-      return { ...state, sessions }
+      const activeMessages = state.activeSessionId === action.payload ? [] : state.activeMessages
+      return { ...state, sessions, activeSessionId, activeMessages }
     }
 
     case 'SET_TYPING':
@@ -65,41 +82,126 @@ function chatReducer(state, action) {
 
 export function ChatProvider({ children }) {
   const [state, dispatch] = useReducer(chatReducer, initialState)
+  const { user } = useAuth()
 
-  const activeSession = state.sessions.find(s => s.id === state.activeSessionId) || null
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+
+    async function load() {
+      dispatch({ type: 'SET_LOADING_SESSIONS', payload: true })
+      try {
+        const data = await fetchSessions()
+        if (!cancelled) dispatch({ type: 'SET_SESSIONS', payload: data })
+      } catch (e) {
+        if (!cancelled) {
+          dispatch({ type: 'SET_LOADING_SESSIONS', payload: false })
+          dispatch({ type: 'SET_ERROR', payload: 'Failed to load sessions' })
+        }
+      }
+    }
+
+    load()
+    return () => { cancelled = true }
+  }, [user])
+
+  
+  useEffect(() => {
+    if (!state.activeSessionId) return
+    let cancelled = false
+
+    async function load() {
+      dispatch({ type: 'SET_LOADING_MESSAGES', payload: true })
+      try {
+        const data = await fetchSession(state.activeSessionId)
+        if (!cancelled) dispatch({ type: 'SET_ACTIVE_MESSAGES', payload: data.messages || [] })
+      } catch (e) {
+        if (!cancelled) {
+          dispatch({ type: 'SET_LOADING_MESSAGES', payload: false })
+          dispatch({ type: 'SET_ERROR', payload: 'Failed to load messages' })
+        }
+      }
+    }
+
+    load()
+    return () => { cancelled = true }
+  }, [state.activeSessionId])
+
+  const newSession = useCallback(async () => {
+    try {
+      const session = await createSession()
+      dispatch({ type: 'ADD_SESSION', payload: session })
+    } catch (e) {
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to create session' })
+    }
+  }, [])
+
+  const setActiveSession = useCallback((id) => {
+    dispatch({ type: 'SET_ACTIVE_SESSION', payload: id })
+  }, [])
+
+  const deleteSession = useCallback(async (id) => {
+    try {
+      await deleteSessionAPI(id)
+      dispatch({ type: 'DELETE_SESSION', payload: id })
+    } catch (e) {
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete session' })
+    }
+  }, [])
 
   const handleSendMessage = useCallback(async (content) => {
-    if (!content.trim() || state.isTyping) return
+    if (!content.trim() || state.isTyping || !state.activeSessionId) return
 
-    const userMsg = { id: crypto.randomUUID(), sender: 'user', content, timestamp: Date.now() }
-    dispatch({ type: 'ADD_MESSAGE', payload: userMsg })
+    const userMsg = {
+      id: crypto.randomUUID(),
+      sender: 'user',
+      content,
+      timestamp: Date.now()
+    }
+
+    dispatch({ type: 'APPEND_MESSAGE', payload: userMsg })
     dispatch({ type: 'SET_TYPING', payload: true })
     dispatch({ type: 'CLEAR_ERROR' })
 
     try {
-      const currentMessages = activeSession ? [...activeSession.messages, userMsg] : [userMsg]
-      const response = await sendMessage(currentMessages)
-      const botMsg = { id: crypto.randomUUID(), sender: 'bot', content: response, timestamp: Date.now() }
-      dispatch({ type: 'ADD_MESSAGE', payload: botMsg })
+      await addMessageToSession(state.activeSessionId, userMsg)
+    } catch {
+      // Non-fatal — AI response still matters more
+    }
+
+    try {
+      const currentMessages = [...state.activeMessages, userMsg]
+      const { content: aiContent, botMsg, title } = await sendChatMessage(
+        currentMessages,
+        state.activeSessionId
+      )
+
+      dispatch({ type: 'APPEND_MESSAGE', payload: botMsg })
+
+      if (title) {
+        dispatch({ type: 'UPDATE_SESSION_TITLE', payload: { id: state.activeSessionId, title } })
+      }
     } catch (e) {
-      dispatch({ type: 'SET_ERROR', payload: e.message })
+      dispatch({ type: 'SET_ERROR', payload: e.message || 'Failed to get response' })
     } finally {
       dispatch({ type: 'SET_TYPING', payload: false })
     }
-  }, [state.isTyping, state.activeSessionId, activeSession])
+  }, [state.isTyping, state.activeSessionId, state.activeMessages])
 
-  const newSession = useCallback(() => dispatch({ type: 'NEW_SESSION' }), [])
-  const setActiveSession = useCallback((id) => dispatch({ type: 'SET_ACTIVE_SESSION', payload: id }), [])
-  const deleteSession = useCallback((id) => dispatch({ type: 'DELETE_SESSION', payload: id }), [])
   const clearError = useCallback(() => dispatch({ type: 'CLEAR_ERROR' }), [])
+
+  const activeSession = state.sessions.find(s => s.id === state.activeSessionId) || null
 
   return (
     <ChatContext.Provider value={{
       sessions: state.sessions,
       activeSession,
       activeSessionId: state.activeSessionId,
+      activeMessages: state.activeMessages,
       isTyping: state.isTyping,
       error: state.error,
+      loadingSessions: state.loadingSessions,
+      loadingMessages: state.loadingMessages,
       sendMessage: handleSendMessage,
       newSession,
       setActiveSession,

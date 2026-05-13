@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import styles from './Sidebar.module.css'
 import logo from '../assets/logo.svg'
 
-export function Sidebar({ collapsed }) {
+export function Sidebar({ collapsed, loadingSessions }) {
   const { sessions, activeSessionId, newSession, setActiveSession, deleteSession } = useChat()
   const { user, logout } = useAuth()
   const [hoveredId, setHoveredId] = useState(null)
@@ -15,10 +15,11 @@ export function Sidebar({ collapsed }) {
   }
 
   const formatDate = (ts) => {
-    const diff = Date.now() - ts
+    const d = new Date(ts)
+    const diff = Date.now() - d.getTime()
     if (diff < 86400000) return 'Today'
     if (diff < 172800000) return 'Yesterday'
-    return new Date(ts).toLocaleDateString([], { month: 'short', day: 'numeric' })
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric' })
   }
 
   const grouped = sessions.reduce((acc, s) => {
@@ -37,14 +38,20 @@ export function Sidebar({ collapsed }) {
         </div>
         <button className={styles.newChatBtn} onClick={newSession}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
           New Chat
         </button>
       </div>
 
       <div className={styles.history}>
-        {sessions.length === 0 ? (
+        {loadingSessions ? (
+          <div className={styles.loadingRow}>
+            <div className={styles.spinner} />
+            <span>Loading chats...</span>
+          </div>
+        ) : sessions.length === 0 ? (
           <div className={styles.empty}>
             <p>No chats yet</p>
             <span>Start one above</span>

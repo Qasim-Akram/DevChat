@@ -33,10 +33,10 @@
   gap: 8px;
   padding: 0 4px;
 }
+
 .logo {
   width: 35px;
   height: 35px;
-
 }
 
 .brandName {
@@ -81,6 +81,32 @@
   letter-spacing: 0.08em;
   padding: 8px 8px 4px;
   font-family: 'JetBrains Mono', monospace;
+}
+
+/* Loading state */
+.loadingRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  color: var(--text-3);
+  font-size: 12px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--text-3);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty {
@@ -191,15 +217,6 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.userEmail {
-  font-size: 10px;
-  color: var(--text-3);
-  font-family: 'JetBrains Mono', monospace;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
