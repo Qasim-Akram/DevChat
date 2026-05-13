@@ -66,7 +66,7 @@ router.post('/', verifyToken, async (req, res) => {
     const data = await response.json()
     const content = data.choices[0].message.content
 
-    const isFirstMessage = session.messages.length === 0
+    const isFirstMessage = session.messages.length <= 1
     const userMsg = messages[messages.length - 1]
     const botMsg = {
       id: crypto.randomUUID(),
