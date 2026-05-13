@@ -1,6 +1,8 @@
 import express from 'express'
 import fetch from 'node-fetch'
+import { ObjectId } from 'mongodb'
 import { verifyToken } from '../middleware/auth.js'
+import { getDB } from '../db.js'
 
 const router = express.Router()
 
@@ -20,11 +22,21 @@ Rules:
 
 router.post('/', verifyToken, async (req, res) => {
   try {
-    const { messages } = req.body
+    const { messages, sessionId } = req.body
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    if (!messages || !Array.isArray(messages) || messages.length === 0)
       return res.status(400).json({ error: 'Messages are required' })
-    }
+
+    if (!sessionId)
+      return res.status(400).json({ error: 'sessionId is required' })
+
+    const db = getDB()
+    const session = await db.collection('sessions').findOne({
+      _id: new ObjectId(sessionId),
+      userId: req.user.id
+    })
+    if (!session)
+      return res.status(403).json({ error: 'Session not found or access denied' })
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -53,8 +65,38 @@ router.post('/', verifyToken, async (req, res) => {
 
     const data = await response.json()
     const content = data.choices[0].message.content
-    res.json({ content })
-  } catch {
+
+    const isFirstMessage = session.messages.length === 0
+    const userMsg = messages[messages.length - 1]
+    const botMsg = {
+      id: crypto.randomUUID(),
+      sender: 'bot',
+      content,
+      timestamp: Date.now()
+    }
+
+    const updateOps = {
+      $push: { messages: botMsg },
+      $set: { updatedAt: new Date() }
+    }
+
+    if (isFirstMessage && userMsg?.content) {
+      const title = userMsg.content.slice(0, 40) + (userMsg.content.length > 40 ? '...' : '')
+      updateOps.$set.title = title
+    }
+
+    await db.collection('sessions').updateOne(
+      { _id: new ObjectId(sessionId) },
+      updateOps
+    )
+
+    const updatedTitle = isFirstMessage && userMsg?.content
+      ? userMsg.content.slice(0, 40) + (userMsg.content.length > 40 ? '...' : '')
+      : session.title
+
+    res.json({ content, botMsg, title: updatedTitle })
+  } catch (err) {
+    console.error('Chat error:', err)
     res.status(500).json({ error: 'Server error' })
   }
 })
