@@ -163,7 +163,7 @@ npm run dev
 
 **Muhammad Qasim Akram**  
 BSCS — Islamia University of Bahawalpur  
-[LinkedIn](https://linkedin.com/in/qasimakram) · [GitHub](https://github.com/Qasim-Akram) · [Portfolio](https://mqasimakram.netlify.app)
+[LinkedIn](https://linkedin.com/in/qasimakram) · [GitHub](https://github.com/Qasim-Akram) · [Portfolio](https://muhammadqasimakram.netlify.app)
 
 ---
 
